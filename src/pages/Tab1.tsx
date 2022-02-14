@@ -17,7 +17,7 @@ const Tab1: React.FC = () => {
       console.log(upd)
 
       let elem = <>
-        <LineChart period="День" upd = { upd }/>
+        <LineChart period="Год" upd = { upd }/>
       </>
       return elem
     }

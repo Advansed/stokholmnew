@@ -27,6 +27,8 @@ interface ContainerProps {
   upd:    number,
 }
   
+let chart : any 
+
 const LineChart: React.FC<ContainerProps> = ({ period, upd }) => {
     const [Sales, setSales] = useState<t_info>({
       Продаж: "0,00",
@@ -71,7 +73,9 @@ const LineChart: React.FC<ContainerProps> = ({ period, upd }) => {
     }, [upd]);
 
       function updateChart(info) {
-        console.log(window)
+        
+        if(chart !== undefined) chart.destroy();
+
         const canvas : any = c_ref.current;
         const ctx = canvas.getContext('2d');
 
@@ -82,18 +86,22 @@ const LineChart: React.FC<ContainerProps> = ({ period, upd }) => {
         if(period === "Год") name = "График за год "
         let lab = ""
         let k = 1;
+        let max = 0;
         info.Данные.forEach(elem => {
           let jarr: any = []
           if(elem.data[0] > 1000) { k = 1000; lab = "(тыс.)"}
           if(elem.data[0] > 100000) { k = 1000000; lab = "(млн.)"}
 
           elem.data.forEach(el => {
+            if(el > max) max = el / k
             jarr = [...jarr, el = el / k]
           });
           elem.data = jarr
         });
 
-        new Chart(ctx, {
+        max = Math.floor(max)
+
+        chart = new Chart(ctx, {
           type: 'line',
           data: {
             labels: info.Периоды,
@@ -124,7 +132,7 @@ const LineChart: React.FC<ContainerProps> = ({ period, upd }) => {
                     text: lab
                   },
                   suggestedMin: 0,
-                  suggestedMax: 10
+                  suggestedMax: max
                 }
               }
             },
