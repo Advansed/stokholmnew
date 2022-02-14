@@ -1,0 +1,7 @@
+{
+  "name": "stokholm",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
