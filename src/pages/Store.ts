@@ -12,9 +12,9 @@ function i_data(){
 
 export const i_state = {
 
-    auth:               false,
+    auth:               true,
     user:{
-        user:           "",
+        user:           "Администратор",
         password:       "123456",
         role:           "Полный"
     },
@@ -61,17 +61,39 @@ for(const [key, value] of Object.entries(i_state)){
 }
 
 
-export async function   getData(method : string, params){
+export async function   postData(method : string, params){
 
     let res = await axios.post(
           URL1C + method
         , params
         ,{
             auth: {
-              username: unescape(encodeURIComponent(Store.getState().user)),
-              password: unescape(encodeURIComponent(Store.getState().password))
+              username: unescape(encodeURIComponent(Store.getState().user.user)),
+              password: unescape(encodeURIComponent(Store.getState().user.password))
             }
           } 
+    ).then(response => response.data)
+        .then((data) => {
+            if(data.Код === 200) console.log(data) 
+            return data
+        }).catch(error => {
+          console.log(error)
+          return {Код: 200}
+        })
+    return res
+
+}
+
+export async function   getData(method : string, params){
+
+    let res = await axios.get(
+          URL1C + method
+        ,{
+            auth: {
+              username: unescape(encodeURIComponent(Store.getState().user.user)),
+              password: unescape(encodeURIComponent(Store.getState().user.password))
+            }, params
+        } 
     ).then(response => response.data)
         .then((data) => {
             if(data.Код === 200) console.log(data) 
@@ -125,15 +147,21 @@ function                create_Store(reducer, initialState) {
 
 const                   rootReducer = combineReducers({
 
-    auth:                      reducers[0],
-    route:                     reducers[1],
-    login:                     reducers[2],
+    auth:                       reducers[0],
+    user:                       reducers[1],
+    goods:                      reducers[2],
+    docs:                       reducers[3],
+    dist:                       reducers[4],
+    stores:                     reducers[5],
+    param1:                     reducers[6],
+    basket:                     reducers[7],
+    search:                     reducers[8],
 
 })
 
 export const Store   =  create_Store(rootReducer, i_state)
 
-export const URL1C = "http://91.185.236.216:29000//trade/hs/API/V1/"
+export const URL1C = "http://91.185.236.216:29080/trade/hs/API/V1/"
 
 
 

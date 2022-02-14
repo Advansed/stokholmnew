@@ -10,7 +10,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import { barChartOutline, ellipse, logoFacebook, square, triangle } from 'ionicons/icons';
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
@@ -34,19 +34,50 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './App.css';
-import { useState } from 'react';
-import { Store } from './pages/Store';
+import { useEffect, useState } from 'react';
+import { getData, Store } from './pages/Store';
+import { Login } from './components/Login';
 
 setupIonicReact();
 
 const App: React.FC = () =>{
-  const [ auth, setAuth] = useState(false)
+  const [ auth, setAuth] = useState(Store.getState().auth)
+
+  async function load(){
+    console.log("Склады")
+    let res = await getData("Склады", {})
+    console.log(res)
+    Store.dispatch({type: "stores", stores: res})
+    Store.dispatch({type: "param1", Склады: StoreToString(res)})
+  }
+
+  useEffect(()=>{
+    load();
+  },[])
+
+  
+function StoreToString(stor): Array<string>{
+
+  return stor.map(function(st){
+      if(st.checked) return st.value
+      return ""
+  })
+}
 
   Store.subscribe({num: 1, type: "auth", func: ()=>{
+    load()
     setAuth(Store.getState().auth)
   }})
-
-  return (  <IonApp>
+  
+  if(!auth)
+    return ( 
+      <IonApp>
+        <Login />
+      </IonApp>
+    )
+  else
+    return (  
+      <IonApp>
         <IonReactRouter>
           <IonTabs>
             <IonRouterOutlet>
@@ -64,10 +95,9 @@ const App: React.FC = () =>{
               </Route>
             </IonRouterOutlet>
             <IonTabBar slot="bottom">
-              { auth ? <>
                 <IonTabButton tab="tab1" href="/tab1">
-                  <IonIcon icon={triangle} />
-                  <IonLabel>Tab 1</IonLabel>
+                  <IonIcon icon={ barChartOutline} />
+                  <IonLabel>Продажи</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="tab2" href="/tab2">
                   <IonIcon icon={ellipse} />
@@ -77,8 +107,6 @@ const App: React.FC = () =>{
                   <IonIcon icon={square} />
                   <IonLabel>Tab 3</IonLabel>
                 </IonTabButton>
-                </> : <></>
-              }
             </IonTabBar>
           </IonTabs>
         </IonReactRouter>

@@ -1,37 +1,36 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { useState } from 'react';
-import { Login } from '../components/Login';
+import LineChart from '../components/chart';
 import { Store } from './Store';
 import './Tab1.css';
 
 const Tab1: React.FC = () => {
-    const [auth, setAuth] = useState(Store.getState().auth)
-    const [name, setName] = useState("")
-
-    Store.subscribe({num: 11, type: "auth", func:()=>{
-      setAuth(Store.getState().auth);
-    }})
 
     function Main(props):JSX.Element{
-      let elem = <></>
+      const [ upd, setUpd] = useState( 0 )
 
-      if(!auth) {
-          console.log(auth)
-          props.setName("Логин")
-          return <Login />
-        }
-      else 
-        return elem
+      Store.subscribe({num : 31, type : "param1", func: ()=>{
+        setUpd(upd + 1)
+        console.log("usef")
+      }})
+
+      console.log(upd)
+
+      let elem = <>
+        <LineChart period="День" upd = { upd }/>
+      </>
+      return elem
     }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>{name }</IonTitle>
+          <IonTitle> Продажи </IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <Main setName= { setName }/>
+        <Main />
       </IonContent>
     </IonPage>
   );

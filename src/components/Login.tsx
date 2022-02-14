@@ -8,16 +8,21 @@ export function Login():JSX.Element {
     const [ user ] = useState(Store.getState().user)
 
     async function login(){
+        console.log(user)
         let res = await getData("Логин",{})
-        console.log(res)
+        if(res.Тип !== undefined){
+            Store.dispatch({type: "user", role: res.Тип })
+            Store.dispatch({type: "auth", auth: true })
+            console.log("Коннект")    
+        }
     }
 
     let elem = <>
         <div className="w-100 h-100 bg-gray">
             <div className="h-20"></div>
             <div className="borders mt-1 ml-1 mr-1 bg-white">
-                <div className="a-center"> <b>Вход в программу</b> </div>
-                <div className="ml-3 mr-3">
+                <div className=""> <b>Вход в программу</b> </div>
+                <div className="ml-2 mr-2 mt-1">
                     <IonInput
                         className="l-input"
                         type = "text"
@@ -27,7 +32,7 @@ export function Login():JSX.Element {
                         }}                       
                     />
                 </div>
-                <div className="ml-3 mr-3">
+                <div className="ml-2 mr-2">
                     <IonInput
                         className="l-input"
                         type = "password"
